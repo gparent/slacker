@@ -488,12 +488,17 @@ class Chat(BaseAPI):
     def post_message(self, channel, text=None, username=None, as_user=None,
                      parse=None, link_names=None, attachments=None,
                      unfurl_links=None, unfurl_media=None, icon_url=None,
-                     icon_emoji=None, thread_ts=None, reply_broadcast=None):
+                     icon_emoji=None, thread_ts=None, reply_broadcast=None,
+                     blocks=None):
 
-        # Ensure attachments are json encoded
+        # Ensure attachments and blocks are json encoded
         if attachments:
             if isinstance(attachments, list):
                 attachments = json.dumps(attachments)
+
+        if blocks:
+            if isinstance(blocks, list):
+                blocks = json.dumps(blocks)
 
         return self.post('chat.postMessage',
                          data={
@@ -509,7 +514,8 @@ class Chat(BaseAPI):
                              'icon_url': icon_url,
                              'icon_emoji': icon_emoji,
                              'thread_ts': thread_ts,
-                             'reply_broadcast': reply_broadcast
+                             'reply_broadcast': reply_broadcast,
+                             'blocks': blocks
                          })
 
     def me_message(self, channel, text):
@@ -549,10 +555,13 @@ class Chat(BaseAPI):
                          })
 
     def post_ephemeral(self, channel, text, user, as_user=None,
-                       attachments=None, link_names=None, parse=None):
-        # Ensure attachments are json encoded
+                       attachments=None, blocks=None,
+                       link_names=None, parse=None):
+        # Ensure attachments and blocks are json encoded
         if attachments is not None and isinstance(attachments, list):
             attachments = json.dumps(attachments)
+        if blocks is not None and isinstance(blocks, list):
+            blocks = json.dumps(blocks)
         return self.post('chat.postEphemeral',
                          data={
                              'channel': channel,
@@ -560,6 +569,7 @@ class Chat(BaseAPI):
                              'user': user,
                              'as_user': as_user,
                              'attachments': attachments,
+                             'blocks': blocks,
                              'link_names': link_names,
                              'parse': parse,
                          })
